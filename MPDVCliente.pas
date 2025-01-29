@@ -1228,7 +1228,6 @@ begin
    end;
 end;
 
-// Define a função PosEx para Delphi 7
 function TFMPDVCliente.PosEx(const SubStr, S: string; Offset: Cardinal = 1): Integer;
 var
   I, X: Integer;
@@ -1272,13 +1271,16 @@ var
 begin
   Result := TStringList.Create;
   try
+    // Remove espaços desnecessários
     StJSon := StringReplace(StJSon, ' :', ':', [rfReplaceAll]);
     StJSon := StringReplace(StJSon, ': ', ':', [rfReplaceAll]);
     StJSon := StringReplace(StJSon, '},', '}|', [rfReplaceAll]); // Separador para arrays
 
+    // Encontra a posição da chave
     InPos := Pos(StChave, StJSon);
     if InPos > 0 then
     begin
+      // Encontra o início e o fim do array
       InStart := PosEx('[', StJSon, InPos) + 1;
       InEnd := PosEx(']', StJSon, InStart) - 1;
       TempStr := Copy(StJSon, InStart, InEnd - InStart + 1);
@@ -1294,8 +1296,12 @@ begin
 
           // Extraímos o valor da chave "enderecoEmail"
           Result.Add(ValorChaveJSon(Value, 'enderecoEmail'));
+          InC := InEnd + 1; // Avança o índice para além do final do objeto atual
+        end
+        else
+        begin
+          Inc(InC);
         end;
-        Inc(InC);
       end;
     end;
   except
@@ -1305,7 +1311,9 @@ begin
 end;
 
 procedure TFMPDVCliente.Button1Click(Sender: TObject);
-var Emails: TStringList; InI: Integer;
+var
+  Emails: TStringList;
+  InI: Integer;
 begin
   Emails := ValoresChaveJSonArray(MemoCPF.Lines.Text, 'listaEmails');
   try
@@ -1317,4 +1325,5 @@ begin
     Emails.Free;
   end;
 end;
+
 end.
